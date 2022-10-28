@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const { dbConfig, jwtSecret } = require("../config");
+const { isLoggedIn, isAuthenticated } = require("../middleware");
 
 const userSchema = Joi.object({
   firstName: Joi.string(),
@@ -53,19 +54,19 @@ router.post("/login", async (req, res) => {
     userData = await userSchema.validateAsync(userData);
   } catch (err) {
     console.log(err);
-    return res.status(400).send({ err: "Incorrect email or password" });
+    return res.status(400).send({ err: "Incorrect email or password 1" });
   }
 
   try {
     const con = await mysql.createConnection(dbConfig);
     const [data] = await con.execute(`
-    SELECT * 
+    SELECT *
     FROM users
     WHERE email = ${mysql.escape(userData.email)}
     `);
 
     if (data.length === 0) {
-      return res.status(400).send({ err: "Incorrect email or paswword" });
+      return res.status(400).send({ err: "Incorrect email or paswword 2" });
     }
 
     const isAuthed = bcrypt.compareSync(userData.password, data[0].password);
@@ -76,7 +77,7 @@ router.post("/login", async (req, res) => {
       );
       return res.send({ msg: "Successfully logged in", token });
     }
-    return res.status(400).send({ err: "Incorrect email or paswword" });
+    return res.status(400).send({ err: "Incorrect email or paswword 3" });
 
     await con.end();
     return res.send(data);

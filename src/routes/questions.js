@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2/promise");
 
-const { isLoggedIn } = require("../middleware");
+const { isLoggedIn, isAuthenticated } = require("../middleware");
 const { dbConfig } = require("../config");
 
 // get all questions
