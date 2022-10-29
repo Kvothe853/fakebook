@@ -5,6 +5,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      {/* <Route path="/question/:id" element={<Question />} /> */}
+      {/* <Route path="/question" element={<Question />} /> */}
     </Routes>
   );
 }

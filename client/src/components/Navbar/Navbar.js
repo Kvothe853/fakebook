@@ -1,18 +1,28 @@
 import styled from "styled-components";
 import RegularButton from "../Buttons/RegularButton";
-import Register from "../../pages/Auth/Register";
 import Modal from "react-modal";
-import { useState, useEffect } from "react";
-import { func } from "joi";
+import Login from "../../pages/Auth/Login";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 Modal.setAppElement("#root");
 
 const NavbarContainer = styled.div`
-  padding: 14px;
-  border-bottom: solid 1px #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+`;
+
+const StyledNav = styled.nav`
+  max-width: 1280px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px;
 `;
 
 const StyledForm = styled.form`
@@ -30,160 +40,97 @@ const StyledInput = styled.input`
   }
 `;
 
-const StyledDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    boxShadow:
+      "rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px",
+  },
+};
 
 const Navbar = () => {
   // login
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  // register
-  const [registerFirstName, setRegisterFirstName] = useState("");
-  const [registerLastName, setRegisterLastName] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
-  //
   const [loginStatus, setLoginStatus] = useState(false);
+  const [test, setTest] = useState(false);
+  // modal
+  const [modalIsOpen, setIsOpen] = useState(false);
+  //notifications
+  const message = (text) => toast(`${text}`);
 
-  function login(e) {
-    e.preventDefault();
-
-    if (email && password) {
-      const option = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      };
-
-      fetch("http://localhost:3000/auth/login", option)
-        .then((res) => res.json())
-        .then((response) => {
-          setLoginStatus(true);
-          test(response);
-          localStorage.setItem("token", response.token);
-        })
-        .catch((err) => console.log(err));
-    }
-
-    setEmail("");
-    setPassword("");
+  function openModal() {
+    setIsOpen(true);
   }
 
-  function register(e) {
-    e.preventDefault();
-    if (
-      registerFirstName &&
-      registerLastName &&
-      registerEmail &&
-      registerPassword
-    ) {
-      const option = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: registerFirstName,
-          lastName: registerLastName,
-          email: registerEmail,
-          password: registerPassword,
-        }),
-      };
-
-      fetch("http://localhost:3000/auth/register", option)
-        .then((res) => res.json())
-        .then((response) => test(response))
-        .catch((err) => console.log(err));
-    }
-
-    setRegisterFirstName("");
-    setRegisterLastName("");
-    setRegisterEmail("");
-    setRegisterPassword("");
+  function closeModal() {
+    setIsOpen(false);
   }
 
   function logout() {
-    localStorage.removeItem("token");
     setLoginStatus(false);
+    closeModal();
+    localStorage.removeItem("token");
   }
 
-  function test(data) {
-    console.log(data);
+  function testas() {
+    setLoginStatus(true);
   }
 
   return (
     <NavbarContainer>
-      <div>Home</div>
-      <div>
-        <RegularButton>Login</RegularButton>
-        <RegularButton>Register</RegularButton>
-        <button onClick={logout}>Log out</button>
-      </div>
-      <StyledForm onSubmit={login}>
-        Login
-        <hr />
-        <StyledDiv>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </StyledDiv>
-        <StyledDiv>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </StyledDiv>
-        <button>Submit</button>
-      </StyledForm>
-      <StyledForm onSubmit={register}>
-        Register
-        <hr />
-        <StyledDiv>
-          <label>First Name</label>
-          <input
-            type="text"
-            value={registerFirstName}
-            onChange={(e) => setRegisterFirstName(e.target.value)}
-          />
-        </StyledDiv>
-        <StyledDiv>
-          <label>Last Name</label>
-          <input
-            type="text"
-            value={registerLastName}
-            onChange={(e) => setRegisterLastName(e.target.value)}
-          />
-        </StyledDiv>
-        <StyledDiv>
-          <label>Email</label>
-          <input
-            type="email"
-            value={registerEmail}
-            onChange={(e) => setRegisterEmail(e.target.value)}
-          />
-        </StyledDiv>
-        <StyledDiv>
-          <label>Password</label>
-          <input
-            type="password"
-            value={registerPassword}
-            onChange={(e) => setRegisterPassword(e.target.value)}
-          />
-        </StyledDiv>
-        <button>Submit</button>
-      </StyledForm>
+      <StyledNav>
+        <div>Fakebook.</div>
+        <div>
+          <div>
+            {!loginStatus && (
+              <div>
+                <RegularButton className={"linkBtn"} func={openModal}>
+                  Log in
+                </RegularButton>
+                <Modal
+                  isOpen={modalIsOpen}
+                  onRequestClose={closeModal}
+                  style={customStyles}
+                  contentLabel="Login modal"
+                >
+                  <Login
+                    closeModal={closeModal}
+                    func={testas}
+                    notification={message}
+                  />
+                </Modal>
+              </div>
+            )}
+            {loginStatus && (
+              <RegularButton className={"linkBtn"} func={logout}>
+                Logout
+              </RegularButton>
+            )}
+          </div>
+          <div>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="colored"
+              toastStyle={{
+                backgroundColor: "rgba(104, 85, 224, 0.7)",
+                color: "#fff",
+              }}
+            />
+          </div>
+        </div>
+      </StyledNav>
     </NavbarContainer>
   );
 };
