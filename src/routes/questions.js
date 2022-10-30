@@ -6,11 +6,44 @@ const { isLoggedIn, isAuthenticated } = require("../middleware");
 const { dbConfig } = require("../config");
 
 // get all questions
+// router.get("/", async (req, res) => {
+//   try {
+//     const con = await mysql.createConnection(dbConfig);
+//     const [data] = await con.execute(`
+//     SELECT *
+//     FROM questions
+//     LEFT JOIN comments
+//     ON questions.id = comments.question_id
+//     ORDER BY questions.id ASC
+//     `);
+//     res.send(data);
+//     await con.end();
+//   } catch (err) {
+//     res.status(400).send({ err: "Error Get" });
+//   }
+// });
+
 router.get("/", async (req, res) => {
   try {
     const con = await mysql.createConnection(dbConfig);
     const [data] = await con.execute(`
-        SELECT * FROM questions
+    SELECT *
+    FROM questions
+    `);
+    res.send(data);
+    await con.end();
+  } catch (err) {
+    res.status(400).send({ err: "Error Get" });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const con = await mysql.createConnection(dbConfig);
+    const [data] = await con.execute(`
+    SELECT *
+    FROM questions
+    WHERE questions.id = 3
     `);
     res.send(data);
     await con.end();
@@ -59,6 +92,7 @@ router.patch("/:id", isLoggedIn, async (req, res) => {
 
 // delete question
 router.delete("/:id", isLoggedIn, async (req, res) => {
+  console.log("lol");
   try {
     const con = await mysql.createConnection(dbConfig);
     const [data] = await con.execute(`

@@ -1,11 +1,47 @@
-import { func } from "joi";
 import { useState, useEffect } from "react";
+import QuestionsForm from "../Forms/QuestionsForm/QuestionsForm";
+import styled from "styled-components";
+import Question from "../Question/Question";
+
+const QuestionsContainer = styled.div`
+  display: flex;
+`;
+
+const QuestionsMain = styled.main`
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+  border: solid 1px #ddd;
+  border-bottom: 0;
+`;
+
+const QuestionsSidebar = styled.div`
+  flex: 2;
+  border: solid 1px #ddd;
+  padding: 15px;
+  border-right: 0;
+`;
 
 const Questions = () => {
   const [questions, setQuestions] = useState(["Vienas"]);
-  const [newQuestionTitle, setNewQuestionTitle] = useState("");
-  const [newQuestionContent, setNewQuestionContent] = useState("");
+
   const [loading, setLoading] = useState(true);
+  const [loginStatus, setLoginStatus] = useState(false);
+
+  const checkLoginStatus = () => {
+    if (
+      localStorage.getItem("token") &&
+      localStorage.getItem("token") !== "undefined"
+    ) {
+      setLoginStatus(true);
+    } else {
+      setLoginStatus(false);
+    }
+  };
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, []);
 
   useEffect(() => {
     fetch("http://localhost:3000/questions")
@@ -15,19 +51,18 @@ const Questions = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  function addNewQuestion(e) {
+  function addNewQuestion(e, newQuestionTitle, newQuestionContent) {
     const tokenas = localStorage.getItem("token");
     e.preventDefault();
+
     if (newQuestionTitle && newQuestionContent) {
       const option = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          //   "x-access-token": localStorage.getItem("token"),
           authorization: localStorage.getItem("token"),
         },
         body: JSON.stringify({
-          user_id: 1,
           title: newQuestionTitle,
           content: newQuestionContent,
         }),
@@ -35,36 +70,32 @@ const Questions = () => {
 
       fetch("http://localhost:3000/questions", option)
         .then((res) => res.json())
-        .then((response) => console.log(response))
+        .then((response) => {
+          if (response) {
+            fetch("http://localhost:3000/questions")
+              .then((resp) => resp.json())
+              .then((response) => setQuestions(response))
+              .catch((err) => console.log(err))
+              .finally(() => setLoading(false));
+          }
+        })
         .catch((err) => console.log(err));
     }
-    console.log(newQuestionTitle);
-    console.log(newQuestionContent);
   }
 
   return (
-    <div>
-      <form onSubmit={addNewQuestion}>
-        <label>Title</label>
-        <input
-          type="text"
-          value={newQuestionTitle}
-          onChange={(e) => setNewQuestionTitle(e.target.value)}
-        />
-        <label>Content</label>
-        <input
-          type="text"
-          value={newQuestionContent}
-          onChange={(e) => setNewQuestionContent(e.target.value)}
-        />
-        <button>Ask a Question</button>
-      </form>
-      <ul>
+    <QuestionsContainer>
+      <QuestionsSidebar>
+        <h3>Ask a Question</h3>
+        {loginStatus && <QuestionsForm addNewQuestion={addNewQuestion} />}
+        <h3>Most Popular Questions</h3>
+      </QuestionsSidebar>
+      <QuestionsMain>
         {questions.map((question, id) => (
-          <li key={id}>{question.title}</li>
+          <Question key={id} question={question} id={id} qid={question.id} />
         ))}
-      </ul>
-    </div>
+      </QuestionsMain>
+    </QuestionsContainer>
   );
 };
 

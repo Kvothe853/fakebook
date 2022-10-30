@@ -6,7 +6,7 @@ const { isLoggedIn } = require("../middleware");
 const { dbConfig } = require("../config");
 
 // get all question comments
-router.get("/:id", isLoggedIn, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const con = await mysql.createConnection(dbConfig);
     const [data] = await con.execute(`
@@ -58,8 +58,7 @@ router.patch("/:id", isLoggedIn, async (req, res) => {
   }
 });
 
-// delete question
-
+// delete comment
 router.delete("/:id", isLoggedIn, async (req, res) => {
   try {
     const con = await mysql.createConnection(dbConfig);

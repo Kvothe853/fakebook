@@ -6,7 +6,7 @@ import styled from "styled-components";
 const MainContainer = styled.div`
   max-width: 1280px;
   width: 100%;
-  margin: 0 auto;
+  margin: -1px auto 0;
 `;
 
 const Home = () => {
@@ -17,7 +17,6 @@ const Home = () => {
     <div>
       <Navbar />
       <MainContainer>
-        <h1>Questions</h1>
         <Questions />
       </MainContainer>
     </div>

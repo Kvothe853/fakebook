@@ -77,7 +77,6 @@ const RegisterMessage = styled.div`
 const EmptyButton = styled.button`
   border: none;
   background: none;
-  margin-left: -5px;
   font-weight: bold;
   color: #444;
   cursor: pointer;
@@ -139,6 +138,9 @@ const Login = ({ closeModal, func, notification }) => {
             func();
             localStorage.setItem("token", response.token);
             notification("Login successful!");
+            setTimeout(() => {
+              window.location.reload(false);
+            }, 1000);
           }
         })
         .catch((err) => console.log(err));

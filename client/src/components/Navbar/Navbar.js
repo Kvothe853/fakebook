@@ -5,6 +5,7 @@ import Login from "../../pages/Auth/Login";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
 
 Modal.setAppElement("#root");
 
@@ -12,8 +13,9 @@ const NavbarContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
-    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+  // box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+  //   rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+  border-bottom: solid 1px #ddd;
 `;
 
 const StyledNav = styled.nav`
@@ -56,7 +58,16 @@ const customStyles = {
 const Navbar = () => {
   // login
   const [loginStatus, setLoginStatus] = useState(false);
-  const [test, setTest] = useState(false);
+
+  useEffect(() => {
+    if (
+      localStorage.getItem("token") &&
+      localStorage.getItem("token") !== "undefined"
+    ) {
+      setLoginStatus(true);
+    }
+  }, []);
+
   // modal
   const [modalIsOpen, setIsOpen] = useState(false);
   //notifications
@@ -74,6 +85,7 @@ const Navbar = () => {
     setLoginStatus(false);
     closeModal();
     localStorage.removeItem("token");
+    window.location.reload(false);
   }
 
   function testas() {
