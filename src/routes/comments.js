@@ -6,12 +6,30 @@ const { isLoggedIn } = require("../middleware");
 const { dbConfig } = require("../config");
 
 // get all question comments
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const con = await mysql.createConnection(dbConfig);
+//     const [data] = await con.execute(`
+//     SELECT *
+//     FROM comments
+//     INNER JOIN users
+//     ON comments.user_id = users.id
+//     WHERE question_id = ${req.params.id}
+//     `);
+//     res.send(data);
+//     await con.end();
+//   } catch (err) {
+//     res.status(400).send({ err: "Error POST" });
+//   }
+// });
 router.get("/:id", async (req, res) => {
   try {
     const con = await mysql.createConnection(dbConfig);
     const [data] = await con.execute(`
     SELECT * 
-    FROM comments
+    FROM users
+    INNER JOIN comments
+    ON comments.user_id = users.id
     WHERE question_id = ${req.params.id}
     `);
     res.send(data);
@@ -37,6 +55,23 @@ router.post("/:id", isLoggedIn, async (req, res) => {
     await con.end();
   } catch (err) {
     res.status(400).send({ err: "Error POST" });
+  }
+});
+
+// likes and dislikes
+router.patch("/likes/:id", isLoggedIn, async (req, res) => {
+  try {
+    const con = await mysql.createConnection(dbConfig);
+    const [data] = await con.execute(`
+    UPDATE comments
+    SET comments.likes = '${req.body.likes}'
+    WHERE comments.id = ${req.body.id} 
+    `);
+    res.send(data);
+    await con.end();
+  } catch (err) {
+    res.status(400).send({ err: "Error POST" });
+    console.log(err);
   }
 });
 
