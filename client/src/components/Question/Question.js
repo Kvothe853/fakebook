@@ -71,7 +71,6 @@ const Question = (props) => {
 
   return (
     <StyledLink>
-      {/* <Link to={`/questions/${question.id}`}> */}
       <QuestionBox key={questionId} onClick={navigateToQuestionContainer}>
         <QuestionBoxHeader>
           <QuestionTitle>{question.title}</QuestionTitle>

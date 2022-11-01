@@ -5,6 +5,7 @@ import RegularButton from "../Buttons/RegularButton";
 import Comment from "../Comment/Comment";
 import CommentsForm from "../Forms/CommentsForm/CommentsForm";
 import DeleteQuestionMessage from "../DeleteQuestionMessage/DeleteQuestionMessage";
+import QuestionEdit from "../QuestionEdit/QuestionEdit";
 import jwt_decode from "jwt-decode";
 import Modal from "react-modal";
 
@@ -58,8 +59,8 @@ const Test = (props) => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [comments, setComments] = useState([]);
   const [loginStatus, setLoginStatus] = useState(false);
-  const [newComment, setNewComment] = useState("");
   const [activeUserInfo, setactiveUserInfo] = useState({});
+  const [edited, setEdited] = useState(question.edited);
 
   // modal
   function openModal() {
@@ -69,6 +70,9 @@ const Test = (props) => {
   function closeModal() {
     setIsOpen(false);
   }
+
+  // update question
+  const updateQuestion = () => {};
 
   //check login status
   const checkLoginStatus = () => {
@@ -159,10 +163,38 @@ const Test = (props) => {
       .then((res) => res.json())
       .then((response) => {
         if (response) {
-          fetch(`http://localhost:3000/comments/${question.id}`)
-            .then((resp) => resp.json())
-            .then((response) => setComments(response))
-            .catch((err) => console.log(err));
+          refreshData();
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  function refreshData() {
+    fetch(`http://localhost:3000/comments/${question.id}`)
+      .then((resp) => resp.json())
+      .then((response) => setComments(response))
+      .catch((err) => console.log(err));
+  }
+
+  const updateComment = (e, newComment, id) => {
+    e.preventDefault();
+
+    const option = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        comment: newComment,
+      }),
+    };
+
+    fetch(`http://localhost:3000/comments/${id}`, option)
+      .then((res) => res.json())
+      .then((response) => {
+        if (response) {
+          refreshData();
         }
       })
       .catch((err) => console.log(err));
@@ -188,15 +220,27 @@ const Test = (props) => {
                 deleteQuestion={deleteQuestion}
               />
             </Modal>
+            <QuestionEdit
+              questionTitle={question.title}
+              questionContent={question.content}
+              id={question.id}
+              updateQuestion={updateQuestion}
+            />
           </div>
         )}
 
         <QuestionTitle>{question.title}</QuestionTitle>
         <QuestiontContent>{question.content}</QuestiontContent>
+        {loginStatus && edited === 1 && <div>Edited...</div>}
       </QuestionContainer>
       <CommentsContainer>
         {comments.map((comment, id) => (
-          <Comment key={id} data={comment} deleteComment={deleteComment} />
+          <Comment
+            key={id}
+            data={comment}
+            deleteComment={deleteComment}
+            updateComment={updateComment}
+          />
         ))}
       </CommentsContainer>
       {loginStatus && <CommentsForm addNewComment={addNewComment} />}

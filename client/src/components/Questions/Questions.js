@@ -5,6 +5,7 @@ import Question from "../Question/Question";
 
 const QuestionsContainer = styled.div`
   display: flex;
+  flex-direction: column;
 `;
 
 const QuestionsMain = styled.main`
@@ -24,7 +25,6 @@ const QuestionsSidebar = styled.div`
 
 const Questions = () => {
   const [questions, setQuestions] = useState(["Vienas"]);
-
   const [loading, setLoading] = useState(true);
   const [loginStatus, setLoginStatus] = useState(false);
 
@@ -88,7 +88,6 @@ const Questions = () => {
       <QuestionsSidebar>
         <h3>Ask a Question</h3>
         {loginStatus && <QuestionsForm addNewQuestion={addNewQuestion} />}
-        <h3>Most Popular Questions</h3>
       </QuestionsSidebar>
       <QuestionsMain>
         {questions.map((question, id) => (

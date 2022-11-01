@@ -5,6 +5,7 @@ import Avatar from "../Avatar/Avatar";
 import Modal from "react-modal";
 import DeleteQuestionMessage from "../DeleteQuestionMessage/DeleteQuestionMessage";
 import jwt_decode from "jwt-decode";
+import CommentEdit from "../CommentEdit/CommentEdit";
 
 Modal.setAppElement("#root");
 
@@ -39,7 +40,7 @@ const CommentRightSide = styled.div``;
 
 const Comment = (props) => {
   const comment = props.data;
-  const [currentComment, setCurrentComment] = useState(comment);
+  const [edited, setEdited] = useState(comment.edited);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(comment.likes);
   const [loginStatus, setLoginStatus] = useState(false);
@@ -68,18 +69,13 @@ const Comment = (props) => {
   };
 
   useEffect(() => {
-    checkLoginStatus();
-  }, []);
-
-  useEffect(() => {
-    if (comment.edited) {
+    if (comment.edited === 1) {
       setEdited(true);
     } else {
       setEdited(false);
     }
+    checkLoginStatus();
   }, []);
-
-  const [edited, setEdited] = useState(false);
 
   const like = () => {
     setCurrentLikes(currentLikes + 1);
@@ -119,25 +115,6 @@ const Comment = (props) => {
     );
   };
 
-  // const deleteComment = () => {
-  //   const option = {
-  //     method: "DELETE",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       authorization: localStorage.getItem("token"),
-  //     },
-  //   };
-
-  //   fetch(`http://localhost:3000/comments/${comment.id}`, option)
-  //     .then((res) => res.json())
-  //     .then((response) => {
-  //       console.log("yep");
-  //     })
-  //     .catch((err) => console.log(err));
-
-  //   closeModal();
-  // };
-
   return (
     <StyledCommentBox>
       <CommentLeftSide>
@@ -146,8 +123,16 @@ const Comment = (props) => {
       </CommentLeftSide>
       <CommentRightSide>
         <DateConverter date={comment.date} />
-        <button>Edit</button>
-        {edited && <div>Edited.....</div>}
+        {comment.user_id === activeUserInfo.id && (
+          <CommentEdit
+            updateComment={props.updateComment}
+            commentContent={comment.comment}
+            id={comment.id}
+          >
+            Edit
+          </CommentEdit>
+        )}
+        {edited && loginStatus && <div>Edited.....</div>}
         <div>Likes: {currentLikes}</div>
         {loginStatus && (
           <div>
