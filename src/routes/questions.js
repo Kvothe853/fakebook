@@ -30,6 +30,7 @@ router.get("/", async (req, res) => {
     SELECT *
     FROM questions
     WHERE questions.archived = 0
+    ORDER BY questions.date DESC
     `);
     res.send(data);
     await con.end();

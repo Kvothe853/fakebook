@@ -97,7 +97,3 @@ router.delete("/:id", isLoggedIn, async (req, res) => {
 });
 
 module.exports = router;
-
-// DELETE FROM comments
-// WHERE comments.user_id = ${req.params.user.id}
-// AND comments.id = ${req.params.id}
