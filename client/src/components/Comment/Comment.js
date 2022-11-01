@@ -2,6 +2,24 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import DateConverter from "../DateConverter/DateConverter";
 import Avatar from "../Avatar/Avatar";
+import Modal from "react-modal";
+import DeleteQuestionMessage from "../DeleteQuestionMessage/DeleteQuestionMessage";
+import jwt_decode from "jwt-decode";
+
+Modal.setAppElement("#root");
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    boxShadow:
+      "rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px",
+  },
+};
 
 const StyledCommentBox = styled.div`
   display: flex;
@@ -21,7 +39,45 @@ const CommentRightSide = styled.div``;
 
 const Comment = (props) => {
   const comment = props.data;
+  const [currentComment, setCurrentComment] = useState(comment);
+  const [modalIsOpen, setIsOpen] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(comment.likes);
+  const [loginStatus, setLoginStatus] = useState(false);
+  const [activeUserInfo, setactiveUserInfo] = useState({});
+
+  // modal
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const checkLoginStatus = () => {
+    if (
+      localStorage.getItem("token") &&
+      localStorage.getItem("token") !== "undefined"
+    ) {
+      setLoginStatus(true);
+      const decodedUser = jwt_decode(localStorage.getItem("token"));
+      setactiveUserInfo(decodedUser);
+    } else {
+      setLoginStatus(false);
+    }
+  };
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, []);
+
+  useEffect(() => {
+    if (comment.edited) {
+      setEdited(true);
+    } else {
+      setEdited(false);
+    }
+  }, []);
 
   const [edited, setEdited] = useState(false);
 
@@ -63,13 +119,24 @@ const Comment = (props) => {
     );
   };
 
-  useEffect(() => {
-    if (comment.edited) {
-      setEdited(true);
-    } else {
-      setEdited(false);
-    }
-  }, []);
+  // const deleteComment = () => {
+  //   const option = {
+  //     method: "DELETE",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       authorization: localStorage.getItem("token"),
+  //     },
+  //   };
+
+  //   fetch(`http://localhost:3000/comments/${comment.id}`, option)
+  //     .then((res) => res.json())
+  //     .then((response) => {
+  //       console.log("yep");
+  //     })
+  //     .catch((err) => console.log(err));
+
+  //   closeModal();
+  // };
 
   return (
     <StyledCommentBox>
@@ -82,10 +149,31 @@ const Comment = (props) => {
         <button>Edit</button>
         {edited && <div>Edited.....</div>}
         <div>Likes: {currentLikes}</div>
-        <div>
-          <button onClick={like}>+</button>
-          <button onClick={dislike}>-</button>
-        </div>
+        {loginStatus && (
+          <div>
+            <button onClick={like}>+</button>
+            <button onClick={dislike}>-</button>
+          </div>
+        )}
+        {comment.user_id === activeUserInfo.id && (
+          <div>
+            <button onClick={openModal}>&#10005;</button>
+            <Modal
+              isOpen={modalIsOpen}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="delete question button"
+            >
+              <DeleteQuestionMessage
+                text={"comment"}
+                closeModal={closeModal}
+                deleteQuestion={() => {
+                  props.deleteComment(comment.id);
+                }}
+              />
+            </Modal>
+          </div>
+        )}
       </CommentRightSide>
     </StyledCommentBox>
   );

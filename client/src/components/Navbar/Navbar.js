@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 Modal.setAppElement("#root");
 
@@ -95,7 +96,7 @@ const Navbar = () => {
   return (
     <NavbarContainer>
       <StyledNav>
-        <div>Fakebook.</div>
+        <Link to={"/"}>Fakebook.</Link>
         <div>
           <div>
             {!loginStatus && (

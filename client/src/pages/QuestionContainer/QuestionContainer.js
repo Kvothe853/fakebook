@@ -55,7 +55,3 @@ const QuestionContainer = (props) => {
 };
 
 export default QuestionContainer;
-
-{
-  /* <Question key={id} question={question} id={id} /> */
-}

@@ -19,10 +19,22 @@ const LinkButton = styled.button`
 `;
 
 const RegularButton = (props) => {
+  const func = props.func;
+  const closeModal = props.closeModal ? props.closeModal : "";
+
+  const fullFunction = () => {
+    func();
+    closeModal();
+  };
+
   if (props.className === "linkBtn") {
-    return <LinkButton onClick={props.func}>{props.children}</LinkButton>;
+    if (props.closeModal) {
+      return <LinkButton onClick={fullFunction}>{props.children}</LinkButton>;
+    } else {
+      return <LinkButton onClick={func}>{props.children}</LinkButton>;
+    }
   } else {
-    return <StyledButton onClick={props.func}>{props.children}</StyledButton>;
+    return <StyledButton onClick={fullFunction}>{props.children}</StyledButton>;
   }
 };
 
