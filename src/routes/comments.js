@@ -6,22 +6,6 @@ const { isLoggedIn } = require("../middleware");
 const { dbConfig } = require("../config");
 
 // get all question comments
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const con = await mysql.createConnection(dbConfig);
-//     const [data] = await con.execute(`
-//     SELECT *
-//     FROM comments
-//     INNER JOIN users
-//     ON comments.user_id = users.id
-//     WHERE question_id = ${req.params.id}
-//     `);
-//     res.send(data);
-//     await con.end();
-//   } catch (err) {
-//     res.status(400).send({ err: "Error POST" });
-//   }
-// });
 router.get("/:id", async (req, res) => {
   try {
     const con = await mysql.createConnection(dbConfig);
@@ -31,6 +15,7 @@ router.get("/:id", async (req, res) => {
     INNER JOIN comments
     ON comments.user_id = users.id
     WHERE question_id = ${req.params.id}
+    AND comments.archived = 0
     `);
     res.send(data);
     await con.end();
@@ -98,9 +83,10 @@ router.delete("/:id", isLoggedIn, async (req, res) => {
   try {
     const con = await mysql.createConnection(dbConfig);
     const [data] = await con.execute(`
-        DELETE FROM comments 
-        WHERE comments.user_id = ${req.params.user.id} 
-        AND comments.id = ${req.params.id}
+      UPDATE comments
+      SET comments.archived = 1
+      WHERE comments.id = ${req.params.id}
+      AND comments.user_id = ${req.params.user.id}
       `);
     res.send(data);
     await con.end();
@@ -111,3 +97,7 @@ router.delete("/:id", isLoggedIn, async (req, res) => {
 });
 
 module.exports = router;
+
+// DELETE FROM comments
+// WHERE comments.user_id = ${req.params.user.id}
+// AND comments.id = ${req.params.id}

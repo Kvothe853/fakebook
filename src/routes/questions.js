@@ -29,6 +29,7 @@ router.get("/", async (req, res) => {
     const [data] = await con.execute(`
     SELECT *
     FROM questions
+    WHERE questions.archived = 0
     `);
     res.send(data);
     await con.end();
@@ -92,13 +93,13 @@ router.patch("/:id", isLoggedIn, async (req, res) => {
 
 // delete question
 router.delete("/:id", isLoggedIn, async (req, res) => {
-  console.log("lol");
   try {
     const con = await mysql.createConnection(dbConfig);
     const [data] = await con.execute(`
-      DELETE FROM questions 
-      WHERE questions.user_id = ${req.params.user.id} 
-      AND questions.id = ${req.params.id}
+    UPDATE questions
+    SET questions.archived = 1
+    WHERE questions.id = ${req.params.id}
+    AND questions.user_id = ${req.params.user.id}
     `);
     res.send(data);
     await con.end();
@@ -107,5 +108,21 @@ router.delete("/:id", isLoggedIn, async (req, res) => {
     res.status(400).send({ err: "Error Delete" });
   }
 });
+
+// router.delete("/:id", isLoggedIn, async (req, res) => {
+//   try {
+//     const con = await mysql.createConnection(dbConfig);
+//     const [data] = await con.execute(`
+//       DELETE FROM questions
+//       WHERE questions.user_id = ${req.params.user.id}
+//       AND questions.id = ${req.params.id}
+//     `);
+//     res.send(data);
+//     await con.end();
+//   } catch (err) {
+//     console.log(err);
+//     res.status(400).send({ err: "Error Delete" });
+//   }
+// });
 
 module.exports = router;
