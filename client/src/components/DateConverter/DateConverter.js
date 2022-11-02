@@ -4,7 +4,7 @@ const DateConverter = (props) => {
   const date = new Date(num);
 
   const years = str.slice(0, 10);
-  const time = str.slice(11, 19);
+  const time = str.slice(11, 16);
 
   return (
     <div>

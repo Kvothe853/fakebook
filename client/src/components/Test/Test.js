@@ -8,6 +8,7 @@ import DeleteQuestionMessage from "../DeleteQuestionMessage/DeleteQuestionMessag
 import QuestionEdit from "../QuestionEdit/QuestionEdit";
 import jwt_decode from "jwt-decode";
 import Modal from "react-modal";
+import DateConverter from "../DateConverter/DateConverter";
 
 Modal.setAppElement("#root");
 
@@ -231,6 +232,7 @@ const Test = (props) => {
 
         <QuestionTitle>{question.title}</QuestionTitle>
         <QuestiontContent>{question.content}</QuestiontContent>
+        <DateConverter date={question.date} />
         {loginStatus && edited === 1 && <div>Edited...</div>}
       </QuestionContainer>
       <CommentsContainer>

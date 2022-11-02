@@ -40,6 +40,7 @@ const QuestionsForm = ({ addNewQuestion }) => {
         setNewQuestionContent("");
       }}
     >
+      <h1>Feel free to ask a question</h1>
       <StyledDiv>
         <StyledLabel>Title</StyledLabel>
         <StyledInput

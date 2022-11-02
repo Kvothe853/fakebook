@@ -1,7 +1,5 @@
 import styled from "styled-components";
 import DateConverter from "../DateConverter/DateConverter";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const QuestionBox = styled.div`
@@ -77,6 +75,7 @@ const Question = (props) => {
           <div>
             <DateConverter date={question.date} />
           </div>
+          <div>total comments: {question.total_question_comments}</div>
         </QuestionBoxHeader>
         <QuestionContent>{question.content}</QuestionContent>
       </QuestionBox>
