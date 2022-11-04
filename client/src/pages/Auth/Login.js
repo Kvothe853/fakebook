@@ -181,15 +181,18 @@ const Login = ({ closeModal, func, notification }) => {
       fetch("http://localhost:3000/auth/register", option)
         .then((res) => res.json())
         .then((response) => {
-          closeModal();
-          notification("Registration Successful, you can Log In now");
+          if (!response.err) {
+            closeModal();
+            notification("Registration Successful, you can Log In now");
+            setRegisterFirstName("");
+            setRegisterLastName("");
+            setRegisterPassword("");
+            setRegisterEmail("");
+          } else {
+            notification("Vartotojas su tokiu el. pastu jau yra sukurtas");
+          }
         })
         .catch((err) => console.log(err));
-
-      setRegisterFirstName("");
-      setRegisterLastName("");
-      setRegisterEmail("");
-      setRegisterPassword("");
     }
   }
 

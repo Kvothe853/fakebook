@@ -7,6 +7,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCommenting } from "@fortawesome/free-solid-svg-icons";
 
 Modal.setAppElement("#root");
 
@@ -41,6 +43,13 @@ const StyledInput = styled.input`
     outline: none;
     border solid 1px #333;
   }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  user-select: none;
+  font-size: 22px;
+  color: rgb(104, 85, 224);
 `;
 
 const customStyles = {
@@ -96,7 +105,10 @@ const Navbar = () => {
   return (
     <NavbarContainer>
       <StyledNav>
-        <Link to={"/"}>Fakebook.</Link>
+        <StyledLink to={"/"}>
+          <FontAwesomeIcon icon={faCommenting} color="rgb(104, 85, 224)" />{" "}
+          Fakebook
+        </StyledLink>
         <div>
           <div>
             {!loginStatus && (

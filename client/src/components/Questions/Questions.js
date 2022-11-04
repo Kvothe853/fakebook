@@ -10,19 +10,11 @@ const QuestionsContainer = styled.div`
 `;
 
 const QuestionsMain = styled.main`
-  flex: 4;
   display: flex;
   flex-direction: column;
-  border: solid 1px #ddd;
-  border-bottom: 0;
 `;
 
-const QuestionsSidebar = styled.div`
-  flex: 2;
-  border: solid 1px #ddd;
-  padding: 15px;
-  border-right: 0;
-`;
+const QuestionsSidebar = styled.div``;
 
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
@@ -47,7 +39,6 @@ const Questions = () => {
   }, []);
 
   function addNewQuestion(e, newQuestionTitle, newQuestionContent) {
-    const tokenas = localStorage.getItem("token");
     e.preventDefault();
 
     if (newQuestionTitle && newQuestionContent) {

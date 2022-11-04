@@ -8,7 +8,9 @@ import DeleteQuestionMessage from "../DeleteQuestionMessage/DeleteQuestionMessag
 import QuestionEdit from "../QuestionEdit/QuestionEdit";
 import jwt_decode from "jwt-decode";
 import Modal from "react-modal";
-import DateConverter from "../DateConverter/DateConverter";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import Avatar from "../Avatar/Avatar";
 
 Modal.setAppElement("#root");
 
@@ -34,19 +36,40 @@ const Main = styled.main`
 const QuestionContainer = styled.div`
   display: flex;
   flex-direction: column;
-  border: solid 1px #333;
+  align-items: flex-end;
   margin: 5px 5px 20px 5px;
-  padding: 20px;
+`;
+
+const QuestionHeader = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0px;
+  border-bottom: solid 1px #ddd;
+  margin-bottom: 15px;
 `;
 
 const QuestionTitle = styled.h1`
   margin-bottom: 5px;
   color: #444;
   font-size: 22px;
+  width: 100%;
+`;
+
+const DeleteButton = styled.div`
+  background: red;
 `;
 
 const QuestiontContent = styled.p`
+  margin-top: 15px;
+  width: 100%;
   color: #777;
+`;
+
+const StyledEdit = styled.div`
+  align-self: flex-start;
+  margin-top: 15px;
 `;
 
 /// comments
@@ -62,6 +85,7 @@ const Test = (props) => {
   const [loginStatus, setLoginStatus] = useState(false);
   const [activeUserInfo, setactiveUserInfo] = useState({});
   const [edited, setEdited] = useState(question.edited);
+  const [questionAuthor, setQuestionAuthor] = useState(["Random", "User"]);
 
   // modal
   function openModal() {
@@ -71,9 +95,6 @@ const Test = (props) => {
   function closeModal() {
     setIsOpen(false);
   }
-
-  // update question
-  const updateQuestion = () => {};
 
   //check login status
   const checkLoginStatus = () => {
@@ -99,11 +120,10 @@ const Test = (props) => {
       .then((resp) => resp.json())
       .then((response) => setComments(response))
       .catch((err) => console.log(err));
-  }, []);
+  });
 
   //adding new comment
   const addNewComment = (e, newComment) => {
-    const token = localStorage.getItem("token");
     e.preventDefault();
 
     if (newComment) {
@@ -132,6 +152,21 @@ const Test = (props) => {
     }
   };
 
+  //user data
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/users/${question.user_id}`)
+      .then((res) => res.json())
+      .then((response) => {
+        if (response) {
+          setQuestionAuthor(response);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   // delete question
   const deleteQuestion = () => {
     const option = {
@@ -150,6 +185,8 @@ const Test = (props) => {
     closeModal();
     window.location.href = "http://localhost:3001/";
   };
+
+  // delete comment
 
   const deleteComment = (id) => {
     const option = {
@@ -177,6 +214,7 @@ const Test = (props) => {
       .catch((err) => console.log(err));
   }
 
+  // update question
   const updateComment = (e, newComment, id) => {
     e.preventDefault();
 
@@ -204,6 +242,49 @@ const Test = (props) => {
   return (
     <Main>
       <QuestionContainer>
+        <QuestionHeader>
+          <div>
+            {questionAuthor[0].firstName} {questionAuthor[0].lastName}
+          </div>
+
+          <DeleteButton>
+            {question.user_id === activeUserInfo.id && (
+              <div>
+                <RegularButton className={"linkBtn"} func={openModal}>
+                  <FontAwesomeIcon icon={faTrashCan} />
+                </RegularButton>
+                <Modal
+                  isOpen={modalIsOpen}
+                  onRequestClose={closeModal}
+                  style={customStyles}
+                  contentLabel="delete question button"
+                >
+                  <DeleteQuestionMessage
+                    text={"question"}
+                    closeModal={closeModal}
+                    deleteQuestion={deleteQuestion}
+                  />
+                </Modal>
+              </div>
+            )}
+          </DeleteButton>
+        </QuestionHeader>
+        <div>
+          <QuestionTitle>{question.title}</QuestionTitle>
+          <QuestiontContent>{question.content}</QuestiontContent>
+        </div>
+
+        {question.user_id === activeUserInfo.id && (
+          <StyledEdit>
+            <QuestionEdit
+              questionTitle={question.title}
+              questionContent={question.content}
+              id={question.id}
+            />
+          </StyledEdit>
+        )}
+      </QuestionContainer>
+      {/* <QuestionContainer>
         {question.user_id === activeUserInfo.id && (
           <div>
             <RegularButton className={"linkBtn"} func={openModal}>
@@ -225,7 +306,6 @@ const Test = (props) => {
               questionTitle={question.title}
               questionContent={question.content}
               id={question.id}
-              updateQuestion={updateQuestion}
             />
           </div>
         )}
@@ -234,7 +314,7 @@ const Test = (props) => {
         <QuestiontContent>{question.content}</QuestiontContent>
         <DateConverter date={question.date} />
         {loginStatus && edited === 1 && <div>Edited...</div>}
-      </QuestionContainer>
+      </QuestionContainer> */}
       <CommentsContainer>
         {comments.map((comment, id) => (
           <Comment

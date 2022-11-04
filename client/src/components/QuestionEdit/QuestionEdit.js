@@ -2,6 +2,8 @@ import Modal from "react-modal";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import jwt_decode from "jwt-decode";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 Modal.setAppElement("#root");
 
@@ -21,6 +23,34 @@ const customStyles = {
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+  padding: 15px;
+  width: 400px;
+`;
+
+const StyledInput = styled.input`
+  padding: 5px;
+  width: 300px;
+  margin: 5px 0;
+  border: solid 1px #333;
+`;
+
+const StyledTextarea = styled.textarea`
+  border: solid 1px #333;
+  padding: 5px;
+  width: 300px
+  width: 100%;
+`;
+
+const StyledEdit = styled.button`
+  font-size: 16px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  &:hover {
+    transition: 0.2s ease-out;
+    color: rgb(104, 85, 224);
+  }
 `;
 
 const QuestionEdit = (props) => {
@@ -79,7 +109,9 @@ const QuestionEdit = (props) => {
 
   return (
     <div>
-      <button onClick={openModal}>EDIT</button>
+      <StyledEdit onClick={openModal}>
+        <FontAwesomeIcon icon={faEdit} />
+      </StyledEdit>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -93,12 +125,12 @@ const QuestionEdit = (props) => {
               updateQuestion(e);
             }}
           >
-            <input
+            <StyledInput
               type="text"
               value={newQuestionTitle}
               onChange={(e) => setNewQuestionTitle(e.target.value)}
             />
-            <textarea
+            <StyledTextarea
               name="content"
               value={newQuestionContent}
               onChange={(e) => setNewQuestionContent(e.target.value)}
