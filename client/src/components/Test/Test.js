@@ -11,6 +11,7 @@ import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Avatar from "../Avatar/Avatar";
+import DateConverter from "../DateConverter/DateConverter";
 
 Modal.setAppElement("#root");
 
@@ -22,15 +23,13 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    boxShadow:
-      "rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px",
+    boxShadow: "rgba(0, 0, 0, 0.15) 0px 2px 8px",
   },
 };
 
 const Main = styled.main`
-  padding: 20px;
   max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
 `;
 
 const QuestionContainer = styled.div`
@@ -45,7 +44,7 @@ const QuestionHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0px;
+  padding: 10px;
   border-bottom: solid 1px #ddd;
   margin-bottom: 15px;
 `;
@@ -58,7 +57,11 @@ const QuestionTitle = styled.h1`
 `;
 
 const DeleteButton = styled.div`
-  background: red;
+  display: flex;
+  align-items: center;
+  button {
+    margin-right: 15px;
+  }
 `;
 
 const QuestiontContent = styled.p`
@@ -67,9 +70,20 @@ const QuestiontContent = styled.p`
   color: #777;
 `;
 
+const QuestionInfo = styled.div`
+  padding: 10px;
+  width: 100%;
+`;
+
 const StyledEdit = styled.div`
+  display: flex;
+  align-items: center;
   align-self: flex-start;
   margin-top: 15px;
+`;
+
+const EditedMessage = styled.div`
+  font-size: 14px;
 `;
 
 /// comments
@@ -247,32 +261,35 @@ const Test = (props) => {
             {questionAuthor[0].firstName} {questionAuthor[0].lastName}
           </div>
 
-          <DeleteButton>
-            {question.user_id === activeUserInfo.id && (
-              <div>
-                <RegularButton className={"linkBtn"} func={openModal}>
-                  <FontAwesomeIcon icon={faTrashCan} />
-                </RegularButton>
-                <Modal
-                  isOpen={modalIsOpen}
-                  onRequestClose={closeModal}
-                  style={customStyles}
-                  contentLabel="delete question button"
-                >
-                  <DeleteQuestionMessage
-                    text={"question"}
-                    closeModal={closeModal}
-                    deleteQuestion={deleteQuestion}
-                  />
-                </Modal>
-              </div>
-            )}
-          </DeleteButton>
+          <div>
+            <DeleteButton>
+              {question.user_id === activeUserInfo.id && (
+                <div>
+                  <RegularButton className={"linkBtn"} func={openModal}>
+                    <FontAwesomeIcon icon={faTrashCan} />
+                  </RegularButton>
+                  <Modal
+                    isOpen={modalIsOpen}
+                    onRequestClose={closeModal}
+                    style={customStyles}
+                    contentLabel="delete question button"
+                  >
+                    <DeleteQuestionMessage
+                      text={"question"}
+                      closeModal={closeModal}
+                      deleteQuestion={deleteQuestion}
+                    />
+                  </Modal>
+                </div>
+              )}
+              <DateConverter date={question.date} />
+            </DeleteButton>
+          </div>
         </QuestionHeader>
-        <div>
+        <QuestionInfo>
           <QuestionTitle>{question.title}</QuestionTitle>
           <QuestiontContent>{question.content}</QuestiontContent>
-        </div>
+        </QuestionInfo>
 
         {question.user_id === activeUserInfo.id && (
           <StyledEdit>
@@ -281,40 +298,12 @@ const Test = (props) => {
               questionContent={question.content}
               id={question.id}
             />
+            {loginStatus && edited === 1 && (
+              <EditedMessage>Edited...</EditedMessage>
+            )}
           </StyledEdit>
         )}
       </QuestionContainer>
-      {/* <QuestionContainer>
-        {question.user_id === activeUserInfo.id && (
-          <div>
-            <RegularButton className={"linkBtn"} func={openModal}>
-              &#10005;
-            </RegularButton>
-            <Modal
-              isOpen={modalIsOpen}
-              onRequestClose={closeModal}
-              style={customStyles}
-              contentLabel="delete question button"
-            >
-              <DeleteQuestionMessage
-                text={"question"}
-                closeModal={closeModal}
-                deleteQuestion={deleteQuestion}
-              />
-            </Modal>
-            <QuestionEdit
-              questionTitle={question.title}
-              questionContent={question.content}
-              id={question.id}
-            />
-          </div>
-        )}
-
-        <QuestionTitle>{question.title}</QuestionTitle>
-        <QuestiontContent>{question.content}</QuestiontContent>
-        <DateConverter date={question.date} />
-        {loginStatus && edited === 1 && <div>Edited...</div>}
-      </QuestionContainer> */}
       <CommentsContainer>
         {comments.map((comment, id) => (
           <Comment

@@ -6,6 +6,16 @@ import Modal from "react-modal";
 import DeleteQuestionMessage from "../DeleteQuestionMessage/DeleteQuestionMessage";
 import jwt_decode from "jwt-decode";
 import CommentEdit from "../CommentEdit/CommentEdit";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faThumbsDown,
+  faThumbsUp,
+  faTrashCan,
+  faCaretUp,
+  faCaretDown,
+  faChevronUp,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
 
 Modal.setAppElement("#root");
 
@@ -24,19 +34,78 @@ const customStyles = {
 
 const StyledCommentBox = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   margin: 5px;
   border: solid 1px #ddd;
-  padding: 20px;
 `;
 
-const CommentLeftSide = styled.div`
+const CommentHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f4f4f4;
+  padding: 10px;
+`;
+
+const CommentContent = styled.div`
+  padding: 20px;
+  border-bottom: solid 1px #ddd;
+`;
+
+const CommentInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px;
+`;
+
+const CommentEditContainer = styled.div`
+  display: flex;
+`;
+
+const CommentLikesContainer = styled.div`
   display: flex;
   align-items: center;
 `;
 
-const CommentRightSide = styled.div``;
+const StyledButtonsContainer = styled.div`
+  display: flex;
+  margin-right: 10px;
+  button {
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #777;
+    height: 20px;
+    &:nth-of-type(1) {
+      margin-bottom: -2px;
+      &:hover {
+        color: #4bb543;
+      }
+    }
+    &:nth-of-type(2) {
+      margin-top: -2px;
+      &:hover {
+        color: #ed4337;
+      }
+    }
+  }
+`;
+
+const StyledDeleteButton = styled.button`
+  font-size: 16px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  margin-right: 5px;
+  margin-left: 5px;
+  &:hover {
+    transition: 0.2s ease-out;
+    color: #d11a2a;
+  }
+`;
 
 const Comment = (props) => {
   const comment = props.data;
@@ -117,49 +186,61 @@ const Comment = (props) => {
 
   return (
     <StyledCommentBox>
-      <CommentLeftSide>
+      <CommentHeader>
         <Avatar name={[comment.firstName, comment.lastName]} />
-        <div>{comment.comment}</div>
-      </CommentLeftSide>
-      <CommentRightSide>
         <DateConverter date={comment.date} />
-        {comment.user_id === activeUserInfo.id && (
-          <CommentEdit
-            updateComment={props.updateComment}
-            commentContent={comment.comment}
-            id={comment.id}
-          >
-            Edit
-          </CommentEdit>
-        )}
-        {edited && loginStatus && <div>Edited.....</div>}
-        <div>Likes: {currentLikes}</div>
-        {loginStatus && (
-          <div>
-            <button onClick={like}>+</button>
-            <button onClick={dislike}>-</button>
-          </div>
-        )}
-        {comment.user_id === activeUserInfo.id && (
-          <div>
-            <button onClick={openModal}>&#10005;</button>
-            <Modal
-              isOpen={modalIsOpen}
-              onRequestClose={closeModal}
-              style={customStyles}
-              contentLabel="delete question button"
+      </CommentHeader>
+      <CommentContent>
+        <div>{comment.comment}</div>
+      </CommentContent>
+      <CommentInfo>
+        <CommentLikesContainer>
+          {loginStatus && (
+            <StyledButtonsContainer>
+              <button onClick={like}>
+                <FontAwesomeIcon icon={faChevronUp} />
+              </button>
+              <button onClick={dislike}>
+                <FontAwesomeIcon icon={faChevronDown} />
+              </button>
+            </StyledButtonsContainer>
+          )}
+          <div>Likes: {currentLikes}</div>
+        </CommentLikesContainer>
+        <CommentEditContainer>
+          {edited && loginStatus && <div>Edited.....</div>}
+          {comment.user_id === activeUserInfo.id && (
+            <CommentEdit
+              updateComment={props.updateComment}
+              commentContent={comment.comment}
+              id={comment.id}
             >
-              <DeleteQuestionMessage
-                text={"comment"}
-                closeModal={closeModal}
-                deleteQuestion={() => {
-                  props.deleteComment(comment.id);
-                }}
-              />
-            </Modal>
-          </div>
-        )}
-      </CommentRightSide>
+              Edit
+            </CommentEdit>
+          )}
+          {comment.user_id === activeUserInfo.id && (
+            <div>
+              <StyledDeleteButton onClick={openModal}>
+                <FontAwesomeIcon icon={faTrashCan} />
+              </StyledDeleteButton>
+              <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                style={customStyles}
+                contentLabel="delete question button"
+              >
+                <DeleteQuestionMessage
+                  text={"comment"}
+                  closeModal={closeModal}
+                  deleteQuestion={() => {
+                    props.deleteComment(comment.id);
+                  }}
+                />
+              </Modal>
+            </div>
+          )}
+        </CommentEditContainer>
+      </CommentInfo>
     </StyledCommentBox>
   );
 };
