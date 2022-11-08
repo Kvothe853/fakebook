@@ -37,6 +37,8 @@ const QuestionContainer = styled.div`
   flex-direction: column;
   align-items: flex-end;
   margin: 5px 5px 20px 5px;
+  padding-bottom: 10px;
+  border-bottom: solid 1px #ddd;
 `;
 
 const QuestionHeader = styled.div`
@@ -78,12 +80,27 @@ const QuestionInfo = styled.div`
 const StyledEdit = styled.div`
   display: flex;
   align-items: center;
-  align-self: flex-start;
+  align-self: flex-end;
   margin-top: 15px;
 `;
 
 const EditedMessage = styled.div`
+  margin-right: 10px;
   font-size: 14px;
+`;
+
+const StyledDeleteButton = styled.button`
+  font-size: 16px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  margin-right: 5px;
+  margin-left: 5px;
+  &:hover {
+    transition: 0.2s ease-out;
+    color: #d11a2a;
+  }
 `;
 
 /// comments
@@ -100,6 +117,27 @@ const Test = (props) => {
   const [activeUserInfo, setactiveUserInfo] = useState({});
   const [edited, setEdited] = useState(question.edited);
   const [questionAuthor, setQuestionAuthor] = useState(["Random", "User"]);
+
+  const currentQuestionAuthor = () => {
+    fetch(`http://localhost:3000/users/${question.user_id}`)
+      .then((res) => res.json())
+      .then((response) => {
+        if (response) {
+          setQuestionAuthor(response);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    currentQuestionAuthor();
+  }, []);
+
+  useEffect(() => {
+    console.log(comments);
+  }, []);
 
   // modal
   function openModal() {
@@ -163,23 +201,11 @@ const Test = (props) => {
           }
         })
         .catch((err) => console.log(err));
+      currentQuestionAuthor();
     }
   };
 
   //user data
-
-  useEffect(() => {
-    fetch(`http://localhost:3000/users/${question.user_id}`)
-      .then((res) => res.json())
-      .then((response) => {
-        if (response) {
-          setQuestionAuthor(response);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   // delete question
   const deleteQuestion = () => {
@@ -263,25 +289,6 @@ const Test = (props) => {
 
           <div>
             <DeleteButton>
-              {question.user_id === activeUserInfo.id && (
-                <div>
-                  <RegularButton className={"linkBtn"} func={openModal}>
-                    <FontAwesomeIcon icon={faTrashCan} />
-                  </RegularButton>
-                  <Modal
-                    isOpen={modalIsOpen}
-                    onRequestClose={closeModal}
-                    style={customStyles}
-                    contentLabel="delete question button"
-                  >
-                    <DeleteQuestionMessage
-                      text={"question"}
-                      closeModal={closeModal}
-                      deleteQuestion={deleteQuestion}
-                    />
-                  </Modal>
-                </div>
-              )}
               <DateConverter date={question.date} />
             </DeleteButton>
           </div>
@@ -293,13 +300,32 @@ const Test = (props) => {
 
         {question.user_id === activeUserInfo.id && (
           <StyledEdit>
+            {loginStatus && edited === 1 && (
+              <EditedMessage>Edited...</EditedMessage>
+            )}
             <QuestionEdit
               questionTitle={question.title}
               questionContent={question.content}
               id={question.id}
             />
-            {loginStatus && edited === 1 && (
-              <EditedMessage>Edited...</EditedMessage>
+            {question.user_id === activeUserInfo.id && (
+              <div>
+                <StyledDeleteButton onClick={openModal}>
+                  <FontAwesomeIcon icon={faTrashCan} />
+                </StyledDeleteButton>
+                <Modal
+                  isOpen={modalIsOpen}
+                  onRequestClose={closeModal}
+                  style={customStyles}
+                  contentLabel="delete question button"
+                >
+                  <DeleteQuestionMessage
+                    text={"question"}
+                    closeModal={closeModal}
+                    deleteQuestion={deleteQuestion}
+                  />
+                </Modal>
+              </div>
             )}
           </StyledEdit>
         )}

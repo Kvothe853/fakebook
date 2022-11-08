@@ -73,26 +73,19 @@ const QuestionParagraph = styled.div`
 `;
 
 const Question = (props) => {
-  const [questionAuthor, setQuestionAuthor] = useState(["Random", "User"]);
-
   const question = props.question;
+  const [questionAuthor, setQuestionAuthor] = useState([
+    {
+      firstName: "testas",
+      lastName: "testas",
+    },
+  ]);
+
+  const user = props.users.filter((user) => user.id === question.user_id);
+
   const questionId = props.id;
 
-  useEffect(() => {
-    fetch(`http://localhost:3000/users/${question.user_id}`)
-      .then((res) => res.json())
-      .then((response) => {
-        if (response) {
-          setQuestionAuthor(response);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
   const navigate = useNavigate();
-
   const navigateToQuestionContainer = () => {
     navigate(`./questions/${question.id}`, { state: question });
   };
@@ -104,12 +97,7 @@ const Question = (props) => {
     <StyledLink>
       <QuestionBox key={questionId} onClick={navigateToQuestionContainer}>
         <QuestionInfo>
-          <Avatar
-            name={[
-              `${questionAuthor[0].firstName}`,
-              `${questionAuthor[0].lastName}`,
-            ]}
-          />
+          <Avatar name={[`${user[0].firstName}`, `${user[0].lastName}`]} />
           <DateAndCommentsDiv>
             <DateConverter date={question.date} />
             <div>

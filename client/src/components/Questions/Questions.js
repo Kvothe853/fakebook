@@ -21,8 +21,15 @@ const Questions = () => {
   const [loading, setLoading] = useState(true);
   const [loginStatus, setLoginStatus] = useState(false);
   const [sortingType, setSortingType] = useState("DESC");
+  const [users, setUsers] = useState([]);
 
-  const checkLoginStatus = () => {
+  useEffect(() => {
+    checkUsers();
+    checkLoginStatus();
+    refreshQuestions();
+  }, []);
+
+  function checkLoginStatus() {
     if (
       localStorage.getItem("token") &&
       localStorage.getItem("token") !== "undefined"
@@ -31,12 +38,20 @@ const Questions = () => {
     } else {
       setLoginStatus(false);
     }
-  };
+  }
 
-  useEffect(() => {
-    checkLoginStatus();
-    refreshQuestions();
-  }, []);
+  function checkUsers() {
+    fetch(`http://localhost:3000/users/`)
+      .then((res) => res.json())
+      .then((response) => {
+        if (response) {
+          setUsers(response);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   function addNewQuestion(e, newQuestionTitle, newQuestionContent) {
     e.preventDefault();
@@ -58,6 +73,7 @@ const Questions = () => {
         .then((res) => res.json())
         .then((response) => {
           if (response) {
+            checkUsers();
             refreshQuestions();
           }
         })
@@ -92,7 +108,13 @@ const Questions = () => {
       </div>
       <QuestionsMain>
         {questions.map((question, id) => (
-          <Question key={id} question={question} id={id} qid={question.id} />
+          <Question
+            key={id}
+            question={question}
+            id={id}
+            qid={question.id}
+            users={users}
+          />
         ))}
       </QuestionsMain>
     </QuestionsContainer>
