@@ -1,6 +1,5 @@
 import RegularButton from "../Buttons/RegularButton";
 import styled from "styled-components";
-import { symbol } from "joi";
 
 const StyledModal = styled.div`
   display: flex;
@@ -28,8 +27,6 @@ const DeleteQuestionMessage = (props) => {
   return (
     <StyledModal>
       <Styledh2>Are you sure you want to delete this {props.text}?</Styledh2>
-      {/* <button onClick={props.closeModal}>No</button>
-      <button onClick={props.deleteQuestion}>Yes</button> */}
       <ButtonsContainer>
         <RegularButton
           className="linkBtn"

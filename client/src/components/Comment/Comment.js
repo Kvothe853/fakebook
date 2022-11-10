@@ -8,11 +8,7 @@ import jwt_decode from "jwt-decode";
 import CommentEdit from "../CommentEdit/CommentEdit";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faThumbsDown,
-  faThumbsUp,
   faTrashCan,
-  faCaretUp,
-  faCaretDown,
   faChevronUp,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
@@ -35,8 +31,10 @@ const customStyles = {
 const StyledCommentBox = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 5px;
+  margin: 5px 15px 8px 15px;
   border: solid 1px #ddd;
+  border-radius: 4px;
+  overflow: hidden;
 `;
 
 const CommentHeader = styled.div`

@@ -1,7 +1,6 @@
 import Modal from "react-modal";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import jwt_decode from "jwt-decode";
 import RegularButton from "../Buttons/RegularButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";

@@ -20,7 +20,6 @@ router.post("/register", async (req, res) => {
 
   try {
     userData = await userSchema.validateAsync(userData);
-    console.log(userData);
   } catch (err) {
     console.log(err);
     return res.send(500).send({ err: "Unexpected error. Please try again. 1" });

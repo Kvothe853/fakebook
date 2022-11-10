@@ -1,7 +1,6 @@
 import Modal from "react-modal";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import RegularButton from "../Buttons/RegularButton";
@@ -96,7 +95,6 @@ const QuestionEdit = (props) => {
   const [newQuestionContent, setNewQuestionContent] = useState(
     props.questionContent
   );
-  const [activeUserInfo, setactiveUserInfo] = useState({});
 
   function openModal() {
     setIsOpen(true);
@@ -105,20 +103,6 @@ const QuestionEdit = (props) => {
   function closeModal() {
     setIsOpen(false);
   }
-
-  const checkLoginStatus = () => {
-    if (
-      localStorage.getItem("token") &&
-      localStorage.getItem("token") !== "undefined"
-    ) {
-      const decodedUser = jwt_decode(localStorage.getItem("token"));
-      setactiveUserInfo(decodedUser);
-    }
-  };
-
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
 
   const updateQuestion = (e) => {
     e.preventDefault();
@@ -173,7 +157,6 @@ const QuestionEdit = (props) => {
               onChange={(e) => setNewQuestionContent(e.target.value)}
             />
 
-            {/* <button type="submit">Edit</button> */}
             <RegularButton className="linkBtn" type="submit">
               Update
             </RegularButton>

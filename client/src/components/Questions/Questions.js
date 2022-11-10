@@ -3,6 +3,7 @@ import QuestionsForm from "../Forms/QuestionsForm/QuestionsForm";
 import styled from "styled-components";
 import Question from "../Question/Question";
 import Sorting from "../Sorting/Sorting";
+import { ThreeDots } from "react-loader-spinner";
 
 const QuestionsContainer = styled.div`
   display: flex;
@@ -74,6 +75,7 @@ const Questions = () => {
         .then((response) => {
           if (response) {
             checkUsers();
+
             refreshQuestions();
           }
         })
@@ -106,6 +108,18 @@ const Questions = () => {
       <div>
         <Sorting func={sorting} />
       </div>
+      {loading && (
+        <ThreeDots
+          height="80"
+          width="80"
+          radius="9"
+          color="#6855E0"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{ marginLeft: "25px" }}
+          wrapperClassName=""
+          visible={true}
+        />
+      )}
       <QuestionsMain>
         {questions.map((question, id) => (
           <Question

@@ -39,6 +39,7 @@ router.post("/:id", isLoggedIn, async (req, res) => {
     res.send(data);
     await con.end();
   } catch (err) {
+    console.log(err);
     res.status(400).send({ err: "Error POST" });
   }
 });

@@ -3,20 +3,19 @@ import DateConverter from "../DateConverter/DateConverter";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect, useTransition } from "react";
 import Avatar from "../Avatar/Avatar";
 
 const QuestionBox = styled.div`
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  overflow: hidden;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
   &:hover {
-    transition: 0.2s ease-out;
     border-color: #ddd;
-    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-      rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
   }
 `;
 
@@ -74,15 +73,8 @@ const QuestionParagraph = styled.div`
 
 const Question = (props) => {
   const question = props.question;
-  const [questionAuthor, setQuestionAuthor] = useState([
-    {
-      firstName: "testas",
-      lastName: "testas",
-    },
-  ]);
 
   const user = props.users.filter((user) => user.id === question.user_id);
-
   const questionId = props.id;
 
   const navigate = useNavigate();
@@ -97,7 +89,9 @@ const Question = (props) => {
     <StyledLink>
       <QuestionBox key={questionId} onClick={navigateToQuestionContainer}>
         <QuestionInfo>
-          <Avatar name={[`${user[0].firstName}`, `${user[0].lastName}`]} />
+          {user.length === 1 && (
+            <Avatar name={[`${user[0].firstName}`, `${user[0].lastName}`]} />
+          )}
           <DateAndCommentsDiv>
             <DateConverter date={question.date} />
             <div>
@@ -114,11 +108,9 @@ const Question = (props) => {
             {text.length > maxLength
               ? `${text.substring(0, maxLength)}...`
               : `${text}`}
-            {/* {text} */}
           </QuestionParagraph>
         </QuestionContent>
       </QuestionBox>
-      {/* </Link> */}
     </StyledLink>
   );
 };

@@ -30,21 +30,6 @@ const StyledNav = styled.nav`
   padding: 20px 0;
 `;
 
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  height: 240px;
-`;
-
-const StyledInput = styled.input`
-  padding: 5px;
-  border: solid 1px #333;
-  &:focus {
-    outline: none;
-    border solid 1px #333;
-  }
-`;
-
 const StyledLink = styled(Link)`
   text-decoration: none;
   user-select: none;

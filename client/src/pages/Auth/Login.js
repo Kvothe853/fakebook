@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const FormsContainer = styled.div`
   display: flex;
@@ -51,7 +51,6 @@ const StyledDiv = styled.div`
 `;
 
 const StyledButton = styled.button`
-  // align-self: center;
   cursor: pointer;
   border: 0;
   border-radius: 4px;
@@ -84,15 +83,6 @@ const EmptyButton = styled.button`
     transition: 0.2s;
     color: rgb(104, 85, 224);
   }
-`;
-
-const StyledMessage = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 20px;
-  height: 20px;
-  background: red;
 `;
 
 const Login = ({ closeModal, func, notification }) => {

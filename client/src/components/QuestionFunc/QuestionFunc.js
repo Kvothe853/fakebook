@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import RegularButton from "../Buttons/RegularButton";
 import Comment from "../Comment/Comment";
 import CommentsForm from "../Forms/CommentsForm/CommentsForm";
 import DeleteQuestionMessage from "../DeleteQuestionMessage/DeleteQuestionMessage";
@@ -10,7 +9,6 @@ import jwt_decode from "jwt-decode";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import Avatar from "../Avatar/Avatar";
 import DateConverter from "../DateConverter/DateConverter";
 
 Modal.setAppElement("#root");
@@ -69,7 +67,7 @@ const DeleteButton = styled.div`
 const QuestiontContent = styled.p`
   margin-top: 15px;
   width: 100%;
-  color: #777;
+  color: #555;
 `;
 
 const QuestionInfo = styled.div`
@@ -103,19 +101,20 @@ const StyledDeleteButton = styled.button`
   }
 `;
 
-/// comments
 const CommentsContainer = styled.div`
   display: flex;
   flex-direction: column;
+  color: #555;
+  font-size: 15px;
 `;
 
-const Test = (props) => {
+const QuestionFunc = (props) => {
   const question = useLocation().state;
   const [modalIsOpen, setIsOpen] = useState(false);
   const [comments, setComments] = useState([]);
   const [loginStatus, setLoginStatus] = useState(false);
   const [activeUserInfo, setactiveUserInfo] = useState({});
-  const [edited, setEdited] = useState(question.edited);
+  const [edited] = useState(question.edited);
   const [questionAuthor, setQuestionAuthor] = useState(["Random", "User"]);
 
   const currentQuestionAuthor = () => {
@@ -135,11 +134,7 @@ const Test = (props) => {
     currentQuestionAuthor();
   }, []);
 
-  useEffect(() => {
-    console.log(comments);
-  }, []);
-
-  // modal
+  //modal
   function openModal() {
     setIsOpen(true);
   }
@@ -166,7 +161,7 @@ const Test = (props) => {
     checkLoginStatus();
   }, []);
 
-  // getting comments
+  //getting comments
   useEffect(() => {
     fetch(`http://localhost:3000/comments/${question.id}`)
       .then((resp) => resp.json())
@@ -205,8 +200,7 @@ const Test = (props) => {
     }
   };
 
-  //user data
-
+  // user data
   // delete question
   const deleteQuestion = () => {
     const option = {
@@ -227,7 +221,6 @@ const Test = (props) => {
   };
 
   // delete comment
-
   const deleteComment = (id) => {
     const option = {
       method: "DELETE",
@@ -297,7 +290,6 @@ const Test = (props) => {
           <QuestionTitle>{question.title}</QuestionTitle>
           <QuestiontContent>{question.content}</QuestiontContent>
         </QuestionInfo>
-
         {question.user_id === activeUserInfo.id && (
           <StyledEdit>
             {loginStatus && edited === 1 && (
@@ -330,6 +322,7 @@ const Test = (props) => {
           </StyledEdit>
         )}
       </QuestionContainer>
+      {loginStatus && <CommentsForm addNewComment={addNewComment} />}
       <CommentsContainer>
         {comments.map((comment, id) => (
           <Comment
@@ -340,9 +333,9 @@ const Test = (props) => {
           />
         ))}
       </CommentsContainer>
-      {loginStatus && <CommentsForm addNewComment={addNewComment} />}
+      {/* {loginStatus && <CommentsForm addNewComment={addNewComment} />} */}
     </Main>
   );
 };
 
-export default Test;
+export default QuestionFunc;

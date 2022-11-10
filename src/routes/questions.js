@@ -5,43 +5,27 @@ const mysql = require("mysql2/promise");
 const { isLoggedIn } = require("../middleware");
 const { dbConfig } = require("../config");
 
-// get all questions
-// main
-
-// SELECT *
-// FROM questions
-// WHERE questions.archived = 0
-// ORDER BY questions.date ${order}
-
+// get all questions with sorting
 router.get("/:sort?", async (req, res) => {
   let order = "DESC";
-  let query = ``;
+  let query = `
+  SELECT questions.*, (SELECT COUNT(*) 
+  FROM comments c 
+  WHERE c.question_id = questions.id 
+  AND c.archived = 0) 
+  AS total_question_comments 
+  FROM questions 
+  WHERE questions.archived = 0 `;
 
   if (req.params.sort === "DESC" || req.params.sort === "ASC") {
     order = req.params.sort;
-    query = `
-    SELECT questions.*, (SELECT COUNT(*) FROM comments c WHERE c.question_id = questions.id AND c.archived = 0) AS total_question_comments
-    FROM questions
-    WHERE questions.archived = 0
-    ORDER BY questions.date ${order}
-    `;
+    query = query + `ORDER BY questions.date ${order}`;
   } else if (req.params.sort === "MOST") {
     order = "DESC";
-    query = `
-    SELECT questions.*, (SELECT COUNT(*) FROM comments c WHERE c.question_id = questions.id AND c.archived = 0) AS total_question_comments
-    FROM questions
-    WHERE questions.archived = 0
-    ORDER BY total_question_comments ${order}
-    
-    `;
+    query = query + `ORDER BY total_question_comments ${order}`;
   } else if (req.params.sort === "LEAST") {
     order = "ASC";
-    query = `
-    SELECT questions.*, (SELECT COUNT(*) FROM comments c WHERE c.question_id = questions.id AND c.archived = 0) AS total_question_comments
-    FROM questions
-    WHERE questions.archived = 0
-    ORDER BY total_question_comments ${order}
-    `;
+    query = query + `ORDER BY total_question_comments ${order}`;
   }
 
   try {
@@ -91,6 +75,7 @@ router.patch("/:id", isLoggedIn, async (req, res) => {
     await con.end();
   } catch (err) {
     res.status(400).send({ err: "Error Patch" });
+    console.log(err);
   }
 });
 
